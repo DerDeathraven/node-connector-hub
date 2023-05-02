@@ -1,9 +1,8 @@
+# Blinds Connector API
 
-# Homebridge Blinds Connector Plugin
+This package uses the code by [Bernard Gorman](https://github.com/gormanb?tab=repositories) which he wrote for Homebridge. I only extracted the library code from it to use it in my applications.
 
-This plugin exposes blinds, shades, curtains and similar devices managed by a Connector Motor Hub [DD7002B](https://fccid.io/VYYDD7002B/User-Manual/User-manual-4082340)/[DD1554](https://fccid.io/VYY1554A00/Users-Manual/User-Manual-4750744) or compatible bridge - as well as standalone Wifi motors such as the [DT72TE, DT72TV, DM35F and DM45E](https://dooya.in/wi-fi-motors/) series - as Homekit accessories. These are typically manufactured by [Dooya](https://dooya.in/wi-fi-system/) and sold under various brand names. If your devices are controlled by the Connector+ app ([iOS](https://apps.apple.com/us/app/connector/id1344058317)/[Android](https://play.google.com/store/apps/details?id=com.smarthome.app.connector&gl=US)) or one of the branded apps from the manufacturers listed below, this plugin will make them available in Homekit.
-
-In addition to the Dooya devices mentioned above, the plugin is also expected to work with devices sold by the following vendors, which use the same network protocol:
+this package is able to work with these merchants who all are using the same white label product:
 
 - [AMP Motorization](https://www.ampmotorization.com/)
 - [Alta Bliss Automation](https://www.altawindowfashions.com/product/automation/bliss-automation/)
@@ -37,7 +36,8 @@ Note that the blinds/curtains/etc must already have been paired with the app in 
 
 ## Instructions
 
-In the plugin configuration, fill in the `App Key` field. The key can be obtained using the Connector+ app:
+use the access token gathered from this location:
+
 - In the top-left corner of the screen, tap the Menu button (☰)
 - Tap your account profile picture, then go to the About page
 - Tap the screen five times to display the key.
@@ -48,8 +48,20 @@ For branded apps, the key can be obtained using similar approaches:
 - In the Brel Home app, go to the Me page and tap five times on either the `version` field (iOS) or to the right of the photo placeholder (Android).
 - In the Bloc Blinds app, go to Settings > About and tap five times on the Bloc Blinds icon.
 
-This is the only mandatory configuration required by the plugin. The plugin will attempt to automatically find your devices via UDP multicast. If this does not work, you can use the `Connector Hub / Wifi Device IPs` section to manually point the plugin to your hub and/or standalone devices.
+## useage
+
+```typescript
+import { ConnectorHubClient } from "blinds-connector-api";
+const ip = "127.0.0.1";
+
+const devices = await ConnectorHubClient.getDeviceList(ip);
+const device = devices[0];
+device.data.map(
+  (shade) => new ConnectorHubClient(accessKey, shade, ip, device.token)
+);
+```
 
 ## Acknowledgements
 
-Thanks to [@alexbacchin](https://github.com/alexbacchin) for putting together [a repo full of documentation](https://github.com/alexbacchin/ConnectorBridge) about the Connector hub network protocol. I had almost given up on finding a way to make my blinds visible to Homekit until I stumbled across it :smiley:
+- Thanks to [@alexbacchin](https://github.com/alexbacchin) for putting together [a repo full of documentation](https://github.com/alexbacchin/ConnectorBridge) about the Connector hub network protocol.
+- Thanks to [Bernard Gorman](https://github.com/gormanb?tab=repositories) for writing the Plugin this library is based on.
