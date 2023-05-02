@@ -1,8 +1,12 @@
 /* eslint-disable indent */
-import {Log} from '../util/log';
 
-import {DeviceInfo, DeviceOpCode, DeviceType, ReadDeviceAck} from './connector-hub-api';
-import {OperationState} from './connector-hub-constants';
+import {
+  DeviceInfo,
+  DeviceOpCode,
+  DeviceType,
+  ReadDeviceAck,
+} from "./connector-hub-api";
+import { OperationState } from "./connector-hub-constants";
 
 /**
  * This class exposes methods for handling all conversions between Homekit and
@@ -13,9 +17,7 @@ export class ConnectorDeviceHandler {
   // By default, a value of 100 is fully closed for connector blinds.
   private kClosedValue = 100;
 
-  constructor(
-      private readonly deviceInfo: DeviceInfo,
-  ) {
+  constructor(private readonly deviceInfo: DeviceInfo) {
     // Unlike hub devices, a WiFi curtain's position and target percentages are
     // the same as Homekit, and the inverse of other Connector devices.
     if (deviceInfo.deviceType === DeviceType.kWiFiCurtain) {
@@ -26,19 +28,21 @@ export class ConnectorDeviceHandler {
   // Convert a percentage position into a binary open / closed state. Note that
   // the input is a Connector hub position, not an inverted Homekit position.
   public positionToOpCode(position: number): DeviceOpCode {
-    return Math.abs(this.kClosedValue - position) < 50 ? DeviceOpCode.kClose :
-                                                         DeviceOpCode.kOpen;
+    return Math.abs(this.kClosedValue - position) < 50
+      ? DeviceOpCode.kClose
+      : DeviceOpCode.kOpen;
   }
 
   // Given a kOpen or kClose opcode, return the equivalent position.
   public opCodeToPosition(opCode: DeviceOpCode): number {
-    return opCode === DeviceOpCode.kClose ? this.kClosedValue :
-                                            this.invertPC(this.kClosedValue);
+    return opCode === DeviceOpCode.kClose
+      ? this.kClosedValue
+      : this.invertPC(this.kClosedValue);
   }
 
   // Helper function to convert between Hub and Homekit percentages.
   private invertPC(percent: number): number {
-    return (100 - percent);
+    return 100 - percent;
   }
 
   public toHomekitPercent(percent: number): number {
@@ -60,12 +64,12 @@ export class ConnectorDeviceHandler {
     // Otherwise, convert the open / closed state into a currentPosition.
     if (deviceState.data.operation <= DeviceOpCode.kOpen) {
       // Convert the device's operation code to a position value.
-      deviceState.data.currentPosition =
-          this.opCodeToPosition(deviceState.data.operation);
+      deviceState.data.currentPosition = this.opCodeToPosition(
+        deviceState.data.operation
+      );
       return deviceState;
     }
     // If we reach here, then neither state nor position are available.
-    Log.warn('Failed to sanitize device state:', deviceState);
     deviceState.data.currentPosition = this.kClosedValue;
     return deviceState;
   }
@@ -82,9 +86,10 @@ export class ConnectorDeviceHandler {
   public getDirection(pos: number, target: number): number {
     const targetOffset = Math.abs(this.kClosedValue - target);
     const posOffset = Math.abs(this.kClosedValue - pos);
-    return posOffset < targetOffset ?
-        OperationState.OPEN_OPENING :
-        (posOffset > targetOffset ? OperationState.CLOSED_CLOSING :
-                                    OperationState.STOPPED);
+    return posOffset < targetOffset
+      ? OperationState.OPEN_OPENING
+      : posOffset > targetOffset
+      ? OperationState.CLOSED_CLOSING
+      : OperationState.STOPPED;
   }
 }

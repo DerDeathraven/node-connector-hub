@@ -5,15 +5,15 @@ export enum DeviceOpCode {
   kClose = 0,
   kOpen = 1,
   kStopped = 2,
-  kStatusQuery = 5
+  kStatusQuery = 5,
 }
 
 export enum DeviceType {
-  kWiFiBridge = '02000001',
-  k433MHzRadioMotor = '10000000',
-  kWiFiCurtain = '22000000',
-  kWiFiTubularMotor = '22000002',
-  kWiFiReceiver = '22000005'
+  kWiFiBridge = "02000001",
+  k433MHzRadioMotor = "10000000",
+  kWiFiCurtain = "22000000",
+  kWiFiTubularMotor = "22000002",
+  kWiFiReceiver = "22000005",
 }
 
 enum DeviceModel {
@@ -30,7 +30,7 @@ enum DeviceModel {
   kDimmingBlinds = 11,
   kCurtain = 12,
   kCurtainOpenLeft = 13,
-  kCurtainOpenRight = 14
+  kCurtainOpenRight = 14,
 }
 
 enum DeviceState {
@@ -38,31 +38,31 @@ enum DeviceState {
   kTopLimitDetected = 1,
   kBottomLimitDetected = 2,
   kLimitsDetected = 3,
-  kThirdLimitDetected = 4
+  kThirdLimitDetected = 4,
 }
 
 enum HubState {
   kWorking = 1,
   kPairing = 2,
-  kUpdating = 3
+  kUpdating = 3,
 }
 
 enum VoltageMode {
   kACMotor = 0,
-  kDCMotor = 1
+  kDCMotor = 1,
 }
 
 enum ChargingState {
   kNotCharging = 0,
   kCharging = 1,
-  kNotChargeable = 2
+  kNotChargeable = 2,
 }
 
 enum WirelessMode {
   kUniDirectional = 0,
   kBiDirectional = 1,
   kBiDiWithMechanicalLimits = 2,
-  kOther = 3
+  kOther = 3,
 }
 
 export interface DeviceInfo {
@@ -71,15 +71,15 @@ export interface DeviceInfo {
 }
 
 interface DeviceStatus {
-  type: DeviceModel;  // Can be absent for a WiFi motor device
+  type: DeviceModel; // Can be absent for a WiFi motor device
   operation: DeviceOpCode;
-  direction?: number;  // Observed on Wifi curtain, likely DeviceOpCode
+  direction?: number; // Observed on Wifi curtain, likely DeviceOpCode
   currentPosition: number;
-  targetPosition?: number;  // Only observed on Wifi motor devices
+  targetPosition?: number; // Only observed on Wifi motor devices
   currentAngle: number;
   currentState: DeviceState;
-  switchMode?: number;   // Observed on Wifi curtain, unknown function
-  controlMode?: number;  // Observed on Wifi curtain, unknown function
+  switchMode?: number; // Observed on Wifi curtain, unknown function
+  controlMode?: number; // Observed on Wifi curtain, unknown function
   voltageMode: VoltageMode;
   batteryLevel: number;
   chargingState: ChargingState;
@@ -126,12 +126,12 @@ interface DeviceCmdTDBU extends DeviceCmd {
 //
 
 export interface GetDeviceListReq {
-  msgType: 'GetDeviceList';
+  msgType: "GetDeviceList";
   msgID: string;
 }
 
 export interface GetDeviceListAck {
-  msgType: 'GetDeviceListAck';
+  msgType: "GetDeviceListAck";
   mac: string;
   deviceType: DeviceType;
   fwVersion: string;
@@ -141,7 +141,7 @@ export interface GetDeviceListAck {
 }
 
 export interface WriteDeviceReq {
-  msgType: 'WriteDevice';
+  msgType: "WriteDevice";
   mac: string;
   deviceType: DeviceType;
   accessToken: string;
@@ -150,22 +150,23 @@ export interface WriteDeviceReq {
 }
 
 export interface WriteDeviceAck {
-  msgType: 'WriteDeviceAck';
+  msgType: "WriteDeviceAck";
   mac: string;
   deviceType: DeviceType;
   data: DeviceStatus;
+  token: string;
   actionResult?: string;
 }
 
 export interface ReadDeviceReq {
-  msgType: 'ReadDevice';
+  msgType: "ReadDevice";
   mac: string;
   deviceType: DeviceType;
   msgID: string;
 }
 
 export interface ReadDeviceAck {
-  msgType: 'ReadDeviceAck';
+  msgType: "ReadDeviceAck";
   mac: string;
   deviceType: DeviceType;
   data: DeviceStatus;
@@ -174,17 +175,16 @@ export interface ReadDeviceAck {
 // Sent to connected clients every 30-60s. Not used at present.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Heartbeat {
-  msgType: 'Heartbeat';
+  msgType: "Heartbeat";
   mac: string;
   deviceType: DeviceType;
-  token: string;
   data: HeartbeatData;
 }
 
 // Sent to client on completion of an operation. Not used at present.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Report {
-  msgType: 'Report';
+  msgType: "Report";
   mac: string;
   deviceType: DeviceType;
   data: DeviceStatus;
